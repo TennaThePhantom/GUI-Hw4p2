@@ -1,0 +1,126 @@
+/*
+File: style.css
+Student Name: Tennessee Foster
+Email: tennessee_foster@student.uml.edu
+Date Created/modify 6/14/2026
+Copyright (c) 2026 by Tennessee Foster. All rights reserved.
+*/
+
+/*
+colors for text(header) and buttons
+*/
+.main-text-color {
+	color: #a522fc;
+}
+.main-button-text-background{
+	background-color: #a522fc;
+}
+.generate-button:hover{
+	background-color: #9900ff;
+}
+/* Table container with autoscroll if table can't fit in user screen */
+.table-container {
+	max-height: 500px;
+	overflow: auto;
+	background-color: #212529;
+	border-radius: 8px;
+}
+
+/* Table styling */
+.multiplication-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 0;
+	background-color: #212529;
+	font-size: 13px;
+}
+
+/* Fixed header table top row */
+.multiplication-table thead tr th {
+	position: sticky;
+	top: 0;
+	background-color: #ac43f2;
+	color: white;
+	padding: 10px 8px;
+	border: 1px solid white;
+	text-align: center;
+	font-weight: bold;
+	z-index: 10;
+}
+
+/* Fixed header the first column */
+.multiplication-table tbody tr th {
+	position: sticky;
+	left: 0;
+	background-color: #ac43f2;
+	color: white;
+	padding: 8px;
+	border: 1px solid white;
+	text-align: center;
+	font-weight: bold;
+	z-index: 10;
+}
+
+/* Corner fixed table cell */
+.multiplication-table thead tr th:first-child {
+	position: sticky;
+	top: 0;
+	left: 0;
+	z-index: 20;
+	background-color: #b91de4;
+}
+
+/* Regular table cells */
+.multiplication-table tbody tr td {
+	padding: 8px;
+	border: 1px solid white;
+	text-align: center;
+	color: white;
+}
+
+/* alternating row colors */
+.multiplication-table tbody tr:nth-child(even) td {
+	background-color: #ac43f2;
+}
+
+.multiplication-table tbody tr:nth-child(odd) td {
+	background-color: #4d2568;
+}
+
+/* Hover effects for table */
+.multiplication-table tbody tr:hover td {
+	background-color: #9903fd;
+	color: white;
+	cursor: pointer;
+}
+
+.multiplication-table tbody tr:hover th {
+	background-color: #9903fd;
+}
+
+/* Error message pop-up */
+.error-message {
+	background-color: red;
+	color: white;
+	padding: 10px;
+	border-radius: 4px;
+	text-align: center;
+}
+
+/* input focus styling */
+.form-control:focus {
+	border-color: #ac43f2;
+	box-shadow: 0 0 0 0.2rem rgba(153, 12, 224, 0.25);
+}
+
+/* table cells */
+.multiplication-table td,
+.multiplication-table th {
+	padding: 6px 4px;
+}
+
+/* Input group text */
+.input-group-text {
+	min-width: 60px;
+	font-weight: bold;
+}

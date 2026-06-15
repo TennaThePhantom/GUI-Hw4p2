@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!--
+File: index.html
+GUI Assignment: HW4 Multiplication Table with JQuery Part 2
+Name: Tennessee Foster
+Email: tennessee_foster@student.uml.edu
+Created/modify 6/14/2026:
+Description: Using Jquery to create UI Sliders and Tab Widgets Part 2
+-->
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Multiplication Table/HW4P2</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+		<link rel="stylesheet" href="./css/style.css" />
+	</head>
+	<body class="bg-dark">
+		<div class="container py-4">
+			<!-- Header -->
+			<div class="text-center mb-4">
+				<h1 class="main-text-color">Multiplication Table Generator</h1>
+				<p class="text-secondary">Enter number ranges to create your table</p>
+			</div>
+
+			<!-- Form for User -->
+			<div class="card bg-secondary bg-opacity-25 mb-4">
+				<div class="card-body">
+					<form id="tableForm" novalidate>
+						<!-- Horizontal Section X-->
+						<div class="mb-4">
+							<label class="form-label text-light fw-bold">
+								Horizontal Axis (Row)
+							</label>
+							<div class="mb-2">
+								<div class="input-group">
+									<span
+										class="input-group-text main-button-text-background text-white"
+									>
+										Min Number
+									</span>
+									<input
+										type="number"
+										id="minX"
+										name="minX"
+										class="form-control bg-dark text-light"
+										value="1"
+										step="1"
+									/>
+								</div>
+							</div>
+							<div>
+								<div class="input-group">
+									<span class="input-group-text bg-secondary text-white">
+										Max Number
+									</span>
+									<input
+										type="number"
+										id="maxX"
+										name="maxX"
+										class="form-control bg-dark text-light"
+										value="5"
+										step="1"
+									/>
+								</div>
+							</div>
+							<div class="form-text text-secondary mt-2">
+								Please enter numbers from -50 to 50
+							</div>
+						</div>
+
+						<!-- Vertical Section Y -->
+						<div class="mb-4">
+							<label class="form-label text-light fw-bold">
+								Vertical Axis (Column)
+							</label>
+							<div class="mb-2">
+								<div class="input-group">
+									<span
+										class="input-group-text main-button-text-background text-white"
+									>
+										Min Number
+									</span>
+									<input
+										type="number"
+										id="minY"
+										name="minY"
+										class="form-control bg-dark text-light"
+										value="1"
+										step="1"
+									/>
+								</div>
+							</div>
+							<div>
+								<div class="input-group">
+									<span class="input-group-text bg-secondary text-white">
+										Max Number
+									</span>
+									<input
+										type="number"
+										id="maxY"
+										name="maxY"
+										class="form-control bg-dark text-light"
+										value="5"
+										step="1"
+									/>
+								</div>
+							</div>
+							<div class="form-text text-secondary mt-2">
+								Please enter numbers from -50 to 50
+							</div>
+						</div>
+
+						<!-- Buttons Row -->
+						<div class="text-center mt-4">
+							<button
+								type="submit"
+								class="btn main-button-text-background generate-button px-4 text-white"
+							>
+								Generate Table
+							</button>
+							<button
+								type="button"
+								id="resetBtn"
+								class="btn btn-secondary px-4 ms-2"
+							>
+								Reset
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<!-- error pop up -->
+			<div id="errorArea" class="mb-3"></div>
+
+			<!-- Table Container and message below -->
+			<div class="table-container">
+				<div id="tableDisplay" class="text-center text-secondary p-5">
+					Enter numbers and click Generate Table to create your table
+				</div>
+			</div>
+		</div>
+
+		<script src="./javascript/script.js"></script>
+	</body>
+</html>
