@@ -31,7 +31,8 @@ function generateUserTable(minX, maxX, minY, maxY) {
 	for (let y of yValues) {
 		table += "<tr>";
 		table += `<th>${y}</th>`; // Row header (multiplicand)
-		for (let x of xValues) { // Calculate and add each cell
+		for (let x of xValues) {
+			// Calculate and add each cell
 			table += `<td>${x * y}</td>`;
 		}
 		table += "</tr>";
@@ -147,7 +148,11 @@ $(document).ready(function () {
 		// user input/typing numbers
 		inputField.on("input keyup", function () {
 			let userNumberInput = parseInt($(this).val());
-			if (!isNaN(userNumberInput) && userNumberInput >= minNumber && userNumberInput <= maxNumber) {
+			if (
+				!isNaN(userNumberInput) &&
+				userNumberInput >= minNumber &&
+				userNumberInput <= maxNumber
+			) {
 				sliderDiv.slider("value", userNumberInput);
 			}
 			$(this).valid();
@@ -214,17 +219,17 @@ $(document).ready(function () {
 				return;
 			}
 
-			// create the tab header
+			// create the tab header/new tabs for saved tabes generated
 			let tabId = `tab-${tabCounter}`;
 			let tabTitle = `[${minX}, ${maxX}] × [${minY}, ${maxY}]`;
-			let liTemplate = `
+			let newTableTab = `
                 <li>
                     <input type="checkbox" class="tab-checkbox" data-tab-id="${tabId}" title="Select for deletion" style="margin: 0 4px;">
                     <a href="#${tabId}">${tabTitle}</a>
                     <span class="ui-icon ui-icon-close delete-single-tab" role="presentation" title="Remove Tab" style="cursor: pointer;"></span>
                 </li>`;
 
-			$("#tabs .ui-tabs-nav").append(liTemplate);
+			$("#tabs .ui-tabs-nav").append(newTableTab);
 
 			// Create the tab content box(the tabs with user tables that were generated)
 			let tableHTML = generateUserTable(minX, maxX, minY, maxY);
@@ -246,7 +251,10 @@ $(document).ready(function () {
 
 	// Tab deletes when click on the x on tab
 	$("#tabs").on("click", ".delete-single-tab", function () {
-		let targetTabToRemove = $(this).closest("li").remove().attr("aria-controls");
+		let targetTabToRemove = $(this)
+			.closest("li")
+			.remove()
+			.attr("aria-controls");
 		$(`#${targetTabToRemove}`).remove();
 		$("#tabs").tabs("refresh");
 	});
