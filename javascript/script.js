@@ -1,113 +1,69 @@
 /*
 File: script.js
 Student Name: Tennessee Foster
-Assignment: HW4 Part 2 - jQuery Query UI Slider and Tab Widgets
+Assignment: HW4 Part 2 - jQuery UI Slider and Tab Widgets
 Email: tennessee_foster@student.uml.edu
-Date: 6/14/2026
+Date: 6/15/2026
 Description: Multiplication table jQuery UI Slider and Tab Widgets
 Copyright (c) 2026 by Tennessee Foster. All rights reserved.
 */
-
-// Get DOM elements
-const form = document.getElementById("tableForm");
-const resetButton = document.getElementById("resetBtn");
-const tableDisplay = document.getElementById("tableDisplay");
-const errorArea = document.getElementById("errorArea");  
-
-
-// Constants
+// constants
 const minNumber = -50;
 const maxNumber = 50;
-
-// error message
-// emoji last access 6/11/2026 - https://emojipedia.org/
-function showError(message) {
-	$(errorArea).html('<div class="error-message">⚠️ ' + message + "</div>");
-	setTimeout(function () {
-		$(errorArea).html("");
-	}, 3000);
-}
-
-// Clear error message
-function clearError() {
-	$(errorArea).html("");
-}
+let tabCounter = 1;
 
 // Generate the user multiplication table from input
 function generateUserTable(minX, maxX, minY, maxY) {
 	// Create array of x values (multipliers the  horizontal axis)
 	let xValues = [];
-	for (let number = minX; number <= maxX; number++) {
-		xValues.push(number);
-	}
+	for (let number = minX; number <= maxX; number++) xValues.push(number);
 
 	// Create array of y values (multipliers the vertical axis)
 	let yValues = [];
-	for (let number = minY; number <= maxY; number++) {
-		yValues.push(number);
-	}
+	for (let number = minY; number <= maxY; number++) yValues.push(number);
 
 	// Build User table from input
 	let table = '<table class="multiplication-table">';
-	table += "<thead>";
-	table += "<tr>";
-	table += "<th>×</th>"; // Corner cell(multiplication)
-
-	// Add header row (multipliers)
-	for (let x of xValues) {
-		table += `<th>${x}</th>`;
-	}
-	table += "</tr>";
-	table += "</thead>";
-	table += "<tbody>";
-
+	table += "<thead><tr><th>×</th>";
+	for (let x of xValues) table += `<th>${x}</th>`; // Add header row (multipliers)
+	table += "</tr></thead><tbody>";
 	// Add data rows
 	for (let y of yValues) {
 		table += "<tr>";
 		table += `<th>${y}</th>`; // Row header (multiplicand)
-
-		// Calculate and add each cell
-		for (let x of xValues) {
-			let product = x * y;
-			table += `<td>${product}</td>`;
+		for (let x of xValues) { // Calculate and add each cell
+			table += `<td>${x * y}</td>`;
 		}
 		table += "</tr>";
 	}
-
-	table += "</tbody>";
-	table += "</table>";
-
-	// Display the table for user
-	tableDisplay.innerHTML = table;
+	table += "</tbody></table>";
+	return table;
+}
+// error message
+// emoji last access 6/16/2026 - https://emojipedia.org/
+function showError(message) {
+	$("#errorArea").html('<div class="error-message">⚠️ ' + message + "</div>");
+	$("#tableDisplay").html(
+		"<p class='text-danger mt-3'>Waiting for valid input...</p>",
+	);
+}
+// Clear error message
+function clearError() {
+	$("#errorArea").html("");
 }
 
-
-// reset form to default values 1 and 5 
-function resetUserInputs() {
-	document.getElementById("minX").value = "1";
-	document.getElementById("maxX").value = "5";
-	document.getElementById("minY").value = "1";
-	document.getElementById("maxY").value = "5";
-
-	// Reset table display message
-	tableDisplay.innerHTML =
-		"Enter numbers and click Generate Table to create your table";
-}
-
-// check to ensure min <= max for both axes (row and column)
+// check to ensure min <= max for both axes (row and column
 function checkMinMax(minX, maxX, minY, maxY) {
-	if (minX > maxX) {
+	if (minX > maxX)
 		return {
 			valid: false,
-			message: "Horizontal: Min must be less than or equal to Max",
+			message: "Horizontal Row: Min must be less than or equal to Max",
 		};
-	}
-	if (minY > maxY) {
+	if (minY > maxY)
 		return {
 			valid: false,
-			message: "Vertical: Min must be less than or equal to Max",
+			message: "Vertical Column: Min must be less than or equal to Max",
 		};
-	}
 	return { valid: true, message: "" };
 }
 
@@ -116,10 +72,7 @@ function checkTableSize(minX, maxX, minY, maxY) {
 	// Calculate table size to prevent too big of a table
 	// if user enter -50 to 50 for x and y -50 to 50 = 100(x rows) * 100(y rows) = 10000
 	// 10000 > 2500 yes don't make the table too big
-	let xCount = Math.abs(maxX - minX) + 1;
-	let yCount = Math.abs(maxY - minY) + 1;
-	let totalCells = xCount * yCount;
-
+	let totalCells = (Math.abs(maxX - minX) + 1) * (Math.abs(maxY - minY) + 1);
 	if (totalCells > 2500) {
 		return {
 			valid: false,
@@ -128,48 +81,89 @@ function checkTableSize(minX, maxX, minY, maxY) {
 	}
 	return { valid: true, message: "" };
 }
-
-// Check if any field is blank or empty
+// Check if any field is blank or empty(fall back if jquery fails for some reason)
 function isAnyFieldBlank(minX, maxX, minY, maxY) {
-	if (isNaN(minX) || isNaN(maxX) || isNaN(minY) || isNaN(maxY)) {
-		return true;
-	}
-	return false;
+	return isNaN(minX) || isNaN(maxX) || isNaN(minY) || isNaN(maxY);
 }
 
-// Wait for document to be ready for Jquery
+// updates the live preview table when user enter data/moves slider around
+function updateTableLivePreview() {
+	if (!$("#tableForm").valid()) {
+		$("#tableDisplay").html(
+			"<p class='text-danger mt-3 p-5'>Please fix the errors above.</p>",
+		);
+		return;
+	}
+
+	let minX = parseInt($("#minX").val());
+	let maxX = parseInt($("#maxX").val());
+	let minY = parseInt($("#minY").val());
+	let maxY = parseInt($("#maxY").val());
+
+	// fall backs/double checks if jquery fails for some reason for most if not all errors for this table
+	// if min is greater than max, blank numbers and table too big
+	if (isAnyFieldBlank(minX, maxX, minY, maxY)) return;
+
+	let minMaxCheck = checkMinMax(minX, maxX, minY, maxY);
+	if (!minMaxCheck.valid) {
+		showError(minMaxCheck.message);
+		return;
+	}
+
+	let sizeCheck = checkTableSize(minX, maxX, minY, maxY);
+	if (!sizeCheck.valid) {
+		showError(sizeCheck.message);
+		return;
+	}
+
+	clearError();
+	let tableHTML = generateUserTable(minX, maxX, minY, maxY);
+	$("#tableDisplay").html(tableHTML);
+}
+
 $(document).ready(function () {
-	// Initialize jQuery Validation plugin
+	// Initialize Tabs
+	$("#tabs").tabs();
+
+	// Setup Sliders/user manually input
+	const inputs = ["minX", "maxX", "minY", "maxY"];
+
+	inputs.forEach((id) => {
+		let inputField = $(`#${id}`);
+		let sliderDiv = $(`#slider-${id}`);
+
+		// slider numbers - updates the live preview when user is using it
+		sliderDiv.slider({
+			min: minNumber,
+			max: maxNumber,
+			value: inputField.val(),
+			slide: function (event, ui) {
+				inputField.val(ui.value);
+				inputField.valid();
+				updateTableLivePreview();
+			},
+		});
+
+		// user input/typing numbers
+		inputField.on("input keyup", function () {
+			let userNumberInput = parseInt($(this).val());
+			if (!isNaN(userNumberInput) && userNumberInput >= minNumber && userNumberInput <= maxNumber) {
+				sliderDiv.slider("value", userNumberInput);
+			}
+			$(this).valid();
+			updateTableLivePreview();
+		});
+	});
+
+	// rules/what's require from user input
 	$("#tableForm").validate({
-		// Rules for each form field(user input fields)
 		rules: {
-			minX: {
-				required: true,
-				number: true,
-				min: minNumber,
-				max: maxNumber,
-			},
-			maxX: {
-				required: true,
-				number: true,
-				min: minNumber,
-				max: maxNumber,
-			},
-			minY: {
-				required: true,
-				number: true,
-				min: minNumber,
-				max: maxNumber,
-			},
-			maxY: {
-				required: true,
-				number: true,
-				min: minNumber,
-				max: maxNumber,
-			},
+			minX: { required: true, number: true, min: minNumber, max: maxNumber },
+			maxX: { required: true, number: true, min: minNumber, max: maxNumber },
+			minY: { required: true, number: true, min: minNumber, max: maxNumber },
+			maxY: { required: true, number: true, min: minNumber, max: maxNumber },
 		},
-		// error messages
-		// emoji last access 6/11/2026 - https://emojipedia.org/
+		// error messages for user
 		messages: {
 			minX: {
 				required: "⚠️ Please enter a number",
@@ -196,90 +190,87 @@ $(document).ready(function () {
 				max: "⚠️ Must be 50 or less",
 			},
 		},
-
-		// simple error messages placement below user input for each form
+		// simple error messages
 		errorPlacement: function (error, element) {
-			// Insert error message after the input
-			if (element.closest(".input-group").length) {
-				error.insertAfter(element.closest(".input-group"));
-			} else {
-				error.insertAfter(element);
-			}
+			// Place error right after the slider container(below it)
+			error.insertAfter(element.closest(".input-group").next("div"));
 			error.addClass("text-danger small d-block mt-1");
 		},
 
-		// submit handler jquery validation
-		submitHandler: function (form) {
-			// Get values from user input
+		// Create a new Tab containing the generated table from whatever inputs data the user enter
+		submitHandler: function (form, event) {
+			event.preventDefault();
+
 			let minX = parseInt($("#minX").val());
 			let maxX = parseInt($("#maxX").val());
 			let minY = parseInt($("#minY").val());
 			let maxY = parseInt($("#maxY").val());
 
-			// double check if user leaves a field blank display error in case jquery validation doesn't load in properly for some reason
-			if (isAnyFieldBlank(minX, maxX, minY, maxY)) {
-				showError(
-					`Blank Number Error: Please enter valid numbers in all fields (no blank fields)`,
-				);
-				return;
-			}
-
-			// double check user input range before generating table 
+			// double check both table size and min>max
 			if (
-				minX < minNumber ||
-				minX > maxNumber ||
-				maxX < minNumber ||
-				maxX > maxNumber ||
-				minY < minNumber ||
-				minY > maxNumber ||
-				maxY < minNumber ||
-				maxY > maxNumber
+				!checkMinMax(minX, maxX, minY, maxY).valid ||
+				!checkTableSize(minX, maxX, minY, maxY).valid
 			) {
-				showError(
-					`Number Range Error: All numbers must be between ${minNumber} and ${maxNumber}`,
-				);
 				return;
 			}
 
-			// check if min <= max
-			let minMaxCheck = checkMinMax(minX, maxX, minY, maxY);
-			if (!minMaxCheck.valid) {
-				showError(minMaxCheck.message);
-				return;
-			}
+			// create the tab header
+			let tabId = `tab-${tabCounter}`;
+			let tabTitle = `[${minX}, ${maxX}] × [${minY}, ${maxY}]`;
+			let liTemplate = `
+                <li>
+                    <input type="checkbox" class="tab-checkbox" data-tab-id="${tabId}" title="Select for deletion" style="margin: 0 4px;">
+                    <a href="#${tabId}">${tabTitle}</a>
+                    <span class="ui-icon ui-icon-close delete-single-tab" role="presentation" title="Remove Tab" style="cursor: pointer;"></span>
+                </li>`;
 
-			// check table size
-			let sizeCheck = checkTableSize(minX, maxX, minY, maxY);
-			if (!sizeCheck.valid) {
-				showError(sizeCheck.message);
-				return;
-			}
+			$("#tabs .ui-tabs-nav").append(liTemplate);
 
-			// Generate the table
-			generateUserTable(minX, maxX, minY, maxY);
-			clearError();
-		},
+			// Create the tab content box(the tabs with user tables that were generated)
+			let tableHTML = generateUserTable(minX, maxX, minY, maxY);
+			let tabContent = `
+                <div id="${tabId}">
+                    <div class="table-container">${tableHTML}</div>
+                </div>`;
+			$("#tabs").append(tabContent);
 
-		// Show errors as user types
-		onkeyup: function (elementError) {
-			$(elementError).valid();
-		},
-
-		onfocusout: function (elementError) {
-			$(elementError).valid();
+			// Refresh Tabs(adding them/switching between them)
+			$("#tabs").tabs("refresh");
+			$("#tabs").tabs("option", "active", -1); // whatever tab user clicks on is now the main tab
+			tabCounter++;
 		},
 	});
-});
 
-// Reset button
-resetButton.addEventListener("click", function () {
-	resetUserInputs();
-	// Reset the form validation
-	$("#tableForm").validate().resetForm();
-	// Remove any visible alerts
-	$(".alert").remove();
-});
+	// Generate the tables for user live
+	updateTableLivePreview();
 
-// Initial table display message
-tableDisplay.innerHTML =
-	"Enter numbers and click Generate Table to create your table";
+	// Tab deletes when click on the x on tab
+	$("#tabs").on("click", ".delete-single-tab", function () {
+		let targetTabToRemove = $(this).closest("li").remove().attr("aria-controls");
+		$(`#${targetTabToRemove}`).remove();
+		$("#tabs").tabs("refresh");
+	});
+
+	// select delete button for selected tabs that has a check mark on it if not ignores it
+	$("#deleteSelectedTabsBtn").on("click", function () {
+		$(".tab-checkbox:checked").each(function () {
+			let targetTabToRemove = $(this).attr("data-tab-id");
+			$(`#${targetTabToRemove}`).remove();
+			$(this).closest("li").remove();
+		});
+		$("#tabs").tabs("refresh");
+	});
+
+	// the reset button
+	$("#resetBtn").on("click", function () {
+		$("#minX, #minY").val("1");
+		$("#maxX, #maxY").val("5");
+
+		$("#slider-minX, #slider-minY").slider("value", 1);
+		$("#slider-maxX, #slider-maxY").slider("value", 5);
+
+		$("#tableForm").validate().resetForm();
+		clearError();
+		updateTableLivePreview();
+	});
+});
