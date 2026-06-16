@@ -1,6 +1,6 @@
 /*
 File: script.js
-Student Name: Tennessee Foster
+Name: Tennessee Foster
 Assignment: HW4 Part 2 - jQuery UI Slider and Tab Widgets
 Email: tennessee_foster@student.uml.edu
 Date: 6/15/2026
